@@ -59,9 +59,41 @@ class Thunder(Card):
 
         return hit_tiles
 
-
     def __str__(self):
         return 'Thunder'
+
+class Tornado(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
+    
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> List[tuple]:
+        breaks = {
+            (0, 0): [1, 1, 1],
+            (1, 1): [0.5, 1, 1],
+            (1, -1): [0.5, 1, 1],
+            (-1, 1): [0.5, 1, 1],
+            (-1, -1): [0.5, 1, 1],
+        }
+
+        hit_tiles = []
+        for (dx, dy), probabilities in breaks.items():
+            tile = board.get(x + dx, y + dy)
+            if not tile:
+                continue
+            if tile is Tile.DESTROYED:
+                continue
+            
+            if random.random() < probabilities[self.level.value]:
+                if tile is Tile.DISTORTED and self.level is CardLevel.MAX:
+                    continue
+                else:
+                    hit_tiles.append((x + dx, y + dy))
+
+        return hit_tiles
+
+    def __str__(self):
+        return 'Tornado'
+    
 
 class TranscendenceBoard:
     # TODO: Add a function for relocation.
@@ -127,7 +159,7 @@ class TranscendenceBoard:
         return self.grid[y][x]
 
     def isFinished(self):
-        return len(self.breakable_tiles) == 0)
+        return len(self.breakable_tiles) == 0
 
     def __str__(self) -> str:
         output = ''

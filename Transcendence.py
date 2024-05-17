@@ -92,6 +92,15 @@ class TranscendenceBoard:
             output += ' '.join([str(x.value) for x in row]) + '\n'
         return output
 
+class TranscendenceMove:
+    def __init__(self, card: Cards.Card, x: int, y: int):
+        self.x = x
+        self.y = y
+        self.card = card
+
+    def get_hit_tiles(self, board: TranscendenceBoard):
+        return self.card.use(board)
+
 
 class TranscendenceGame:
     def __init__(self, board: TranscendenceBoard):
@@ -109,7 +118,8 @@ class TranscendenceGame:
 
     def use_left(self, x: int, y: int):
         # TODO: Make sure that the tile used is valid.
-        hit_tiles = self.hand_left.use(self.board, x, y)
+        move = TranscendenceMove(self.hand_left, x, y)
+        hit_tiles = move.get_hit_tiles(self.board)
         for hit_tile in hit_tiles:
             if self.board.get(*hit_tile) is Tile.NORMAL:
                 self.board.set_tile(*hit_tile, Tile.DESTROYED)

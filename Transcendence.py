@@ -114,6 +114,9 @@ class TranscendenceGame:
         self.changes_left = 0
 
     def bless(self):
+        self.turns_left += 1
+
+    def add(self):
         self.changes_left += 1
 
     def use_left(self, x: int, y: int):
@@ -129,6 +132,7 @@ class TranscendenceGame:
                 raise NotImplementedError(f'Tile of type {hit_tile}'
                                           'is not supported')
 
+        self.turns_left -= 1
         # TODO: Add card moving.
 
     def __str__(self):

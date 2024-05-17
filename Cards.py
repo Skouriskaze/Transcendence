@@ -1,7 +1,7 @@
 from Transcendence import TranscendenceBoard
 from Transcendence import Tile
 from enum import Enum
-from typing import List
+from typing import Set
 
 import random
 
@@ -15,7 +15,7 @@ class Card:
     def __init__(self):
         raise NotImplementedError()
 
-    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
 
 
@@ -23,7 +23,7 @@ class Thunder(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
     
-    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
             (0, 0): [1, 1, 1],
             (1, 0): [0.5, 1, 1],
@@ -32,7 +32,7 @@ class Thunder(Card):
             (0, -1): [0.5, 1, 1],
         }
 
-        hit_tiles = []
+        hit_tiles = set()
         for (dx, dy), probabilities in breaks.items():
             tile = board.get(x + dx, y + dy)
             if not tile:
@@ -44,7 +44,7 @@ class Thunder(Card):
                 if tile is Tile.DISTORTED and self.level is CardLevel.MAX:
                     continue
                 else:
-                    hit_tiles.append((x + dx, y + dy))
+                    hit_tiles.add((x + dx, y + dy))
 
         return hit_tiles
 
@@ -56,7 +56,7 @@ class Tornado(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
     
-    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
             (0, 0): [1, 1, 1],
             (1, 1): [0.5, 1, 1],
@@ -65,7 +65,7 @@ class Tornado(Card):
             (-1, -1): [0.5, 1, 1],
         }
 
-        hit_tiles = []
+        hit_tiles = set()
         for (dx, dy), probabilities in breaks.items():
             tile = board.get(x + dx, y + dy)
             if not tile:
@@ -77,7 +77,7 @@ class Tornado(Card):
                 if tile is Tile.DISTORTED and self.level is CardLevel.MAX:
                     continue
                 else:
-                    hit_tiles.append((x + dx, y + dy))
+                    hit_tiles.add((x + dx, y + dy))
 
         return hit_tiles
 
@@ -89,7 +89,7 @@ class Purify(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
     
-    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
             (0, 0): [1, 1, 1],
             (1, 0): [0.5, 1, 1],
@@ -98,7 +98,7 @@ class Purify(Card):
             (0, -1): [0, 0, 1],
         }
 
-        hit_tiles = []
+        hit_tiles = set()
         for (dx, dy), probabilities in breaks.items():
             tile = board.get(x + dx, y + dy)
             if not tile:
@@ -107,7 +107,7 @@ class Purify(Card):
                 continue
             
             if random.random() < probabilities[self.level.value]:
-                hit_tiles.append((x + dx, y + dy))
+                hit_tiles.add((x + dx, y + dy))
 
         return hit_tiles
 
@@ -119,8 +119,15 @@ class Tempest(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
 
-    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
-        raise NotImplementedError()
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+        hit_tiles = set()
+        hit_tiles.add((x, y))
+        for current_y in range(0, board.height):
+            tile = board.get(x, current_y)
+            probability = max(0.1, 1 - (0.15 * abs(current_y - y)))
+            if random.random() < probability:
+                hit_tiles.add((x, current_y))
+        return hit_tiles
 
     def __str__(self):
         return 'Tempest'
@@ -130,7 +137,7 @@ class Hellfire(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
 
-    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
 
     def __str__(self):
@@ -141,7 +148,7 @@ class Shockwave(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
 
-    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
 
     def __str__(self):
@@ -152,7 +159,7 @@ class Earthquake(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
 
-    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
 
     def __str__(self):
@@ -163,7 +170,7 @@ class TidalWave(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
 
-    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
 
     def __str__(self):
@@ -174,7 +181,7 @@ class Explosion(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
 
-    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
 
     def __str__(self):
@@ -185,7 +192,7 @@ class Lightning(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
 
-    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+    def use(self, board: 'TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
 
     def __str__(self):

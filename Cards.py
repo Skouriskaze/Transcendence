@@ -37,7 +37,7 @@ class Thunder(Card):
             tile = board.get(x + dx, y + dy)
             if not tile:
                 continue
-            if tile is Tile.DESTROYED:
+            if not Tile.is_breakable(tile):
                 continue
             
             if random.random() < probabilities[self.level.value]:
@@ -70,7 +70,7 @@ class Tornado(Card):
             tile = board.get(x + dx, y + dy)
             if not tile:
                 continue
-            if tile is Tile.DESTROYED:
+            if not Tile.is_breakable(tile):
                 continue
             
             if random.random() < probabilities[self.level.value]:

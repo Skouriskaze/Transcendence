@@ -112,5 +112,81 @@ class Purify(Card):
         return hit_tiles
 
     def __str__(self):
-        return 'Tornado'
+        return 'Purify'
     
+
+class Tempest(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
+
+    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+        raise NotImplementedError()
+
+    def __str__(self):
+        return 'Tempest'
+
+
+class Hellfire(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
+
+    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+        raise NotImplementedError()
+
+    def __str__(self):
+        return 'Hellfire'
+
+
+class Shockwave(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
+
+    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+        raise NotImplementedError()
+
+    def __str__(self):
+        return 'Shockwave'
+
+
+class Earthquake(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
+
+    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+        raise NotImplementedError()
+
+    def __str__(self):
+        return 'Earthquake'
+
+
+class TidalWave(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
+
+    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+        raise NotImplementedError()
+
+    def __str__(self):
+        return 'Tidal Wave'
+
+
+class Explosion(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
+
+    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+        raise NotImplementedError()
+
+    def __str__(self):
+        return 'Explosion'
+
+
+class Lightning(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
+
+    def use(self, board: 'TranscendenceBoard') -> List[tuple]:
+        raise NotImplementedError()
+
+    def __str__(self):
+        return 'Lightning'

@@ -14,7 +14,7 @@ class Tile(Enum):
     ENHANCEMENT = 9
 
     @classmethod
-    def is_breakable(tile: 'Tile'):
+    def is_breakable(cls, tile: 'Tile'):
         if tile in {Tile.NONE, Tile.DESTROYED}:
             return False
         return True
@@ -98,8 +98,8 @@ class TranscendenceMove:
         self.y = y
         self.card = card
 
-    def get_hit_tiles(self, board: TranscendenceBoard):
-        return self.card.use(board)
+    def get_hit_tiles(self, board: TranscendenceBoard, x: int, y: int):
+        return self.card.use(board, x, y)
 
 
 class TranscendenceGame:
@@ -122,7 +122,7 @@ class TranscendenceGame:
     def use_left(self, x: int, y: int):
         # TODO: Make sure that the tile used is valid.
         move = TranscendenceMove(self.hand_left, x, y)
-        hit_tiles = move.get_hit_tiles(self.board)
+        hit_tiles = move.get_hit_tiles(self.board, x, y)
         for hit_tile in hit_tiles:
             if self.board.get(*hit_tile) is Tile.NORMAL:
                 self.board.set_tile(*hit_tile, Tile.DESTROYED)

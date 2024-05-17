@@ -15,6 +15,11 @@ class Tile(Enum):
     MYSTERY = 8
     ENHANCEMENT = 9
 
+    @classmethod
+    def is_breakable(tile: 'Tile'):
+        if tile in {Tile.NONE, Tile.DESTROYED}:
+            return False
+        return True
 
 class CardLevel(Enum):
     NORMAL = 0

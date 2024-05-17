@@ -1,5 +1,8 @@
 from enum import Enum
 from typing import Set
+from typing import Dict
+from typing import Tuple
+from typing import List
 
 import Transcendence
 import random
@@ -17,20 +20,12 @@ class Card:
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
 
-
-class Thunder(Card):
-    def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
-    
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
-        breaks = {
-            (0, 0): [1, 1, 1],
-            (1, 0): [0.5, 1, 1],
-            (0, 1): [0.5, 1, 1],
-            (-1, 0): [0.5, 1, 1],
-            (0, -1): [0.5, 1, 1],
-        }
-
+    @classmethod
+    def get_hit_tiles(self,
+                      board: 'Transcendence.TranscendenceBoard',
+                      x: int,
+                      y: int,
+                      breaks: Dict[Tuple, List]) -> Set[Tuple]:
         hit_tiles = set()
         for (dx, dy), probabilities in breaks.items():
             tile = board.get(x + dx, y + dy)
@@ -46,6 +41,21 @@ class Thunder(Card):
                     hit_tiles.add((x + dx, y + dy))
 
         return hit_tiles
+
+class Thunder(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
+    
+    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+        breaks = {
+            (0, 0): [1, 1, 1],
+            (1, 0): [0.5, 1, 1],
+            (0, 1): [0.5, 1, 1],
+            (-1, 0): [0.5, 1, 1],
+            (0, -1): [0.5, 1, 1],
+        }
+
+        return Card.get_hit_tiles(board, x, y, breaks)
 
     def __str__(self):
         return 'Thunder'
@@ -64,21 +74,7 @@ class Tornado(Card):
             (-1, -1): [0.5, 1, 1],
         }
 
-        hit_tiles = set()
-        for (dx, dy), probabilities in breaks.items():
-            tile = board.get(x + dx, y + dy)
-            if not tile:
-                continue
-            if not Transcendence.Tile.is_breakable(tile):
-                continue
-            
-            if random.random() < probabilities[self.level.value]:
-                if tile is Transcendence.Tile.DISTORTED and self.level is CardLevel.MAX:
-                    continue
-                else:
-                    hit_tiles.add((x + dx, y + dy))
-
-        return hit_tiles
+        return Card.get_hit_tiles(board, x, y, breaks)
 
     def __str__(self):
         return 'Tornado'

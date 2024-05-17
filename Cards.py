@@ -1,7 +1,9 @@
 from Transcendence import TranscendenceBoard
-from Transcendence import TranscendenceGame
+from Transcendence import Tile
 from enum import Enum
 from typing import List
+
+import random
 
 class CardLevel(Enum):
     NORMAL = 0

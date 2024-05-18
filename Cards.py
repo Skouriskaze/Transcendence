@@ -232,7 +232,24 @@ class Explosion(Card):
         self.level = level
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
-        raise NotImplementedError()
+        hit_tiles = set()
+        for delta in range(0, max(board.height, board.width)):
+            tiles = set(
+                (x + delta, y + delta),
+                (x - delta, y + delta),
+                (x + delta, y - delta),
+                (x - delta, y - delta),
+            )
+            for cx, cy in tiles:
+                tile = board.get(cx, cy)
+                if not Transcendence.Tile.is_breakable(tile):
+                    continue
+
+                probability = max(0.1, 1 - (0.15 * delta))
+                if random.random() < probability:
+                    hit_tiles.add((x, current_y))
+        
+        return hit_tiles
 
     def __str__(self):
         return 'Explosion'

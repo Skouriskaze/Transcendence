@@ -159,7 +159,18 @@ class Shockwave(Card):
         self.level = level
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
-        raise NotImplementedError()
+        breaks = {
+            (0, 0): [1, 1, 1],
+            (1, -1): [0.75, 1, 1],
+            (1, 0): [0.75, 1, 1],
+            (1, 1): [0.75, 1, 1],
+            (0, -1): [0.75, 1, 1],
+            (0, 1): [0.75, 1, 1],
+            (1, -1): [0.75, 1, 1],
+            (1, 0): [0.75, 1, 1],
+            (1, 1): [0.75, 1, 1],
+        }
+        return Card.get_hit_tiles(board, x, y, breaks)
 
     def __str__(self):
         return 'Shockwave'

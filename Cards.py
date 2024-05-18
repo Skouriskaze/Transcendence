@@ -202,7 +202,26 @@ class TidalWave(Card):
         self.level = level
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
-        raise NotImplementedError()
+        hit_tiles = set()
+        for current_x in range(0, board.width):
+            tile = board.get(current_x, y)
+            if not Transcendence.Tile.is_breakable(tile):
+                continue
+
+            probability = max(0.1, 1 - (0.15 * abs(current_x - x)))
+            if random.random() < probability:
+                hit_tiles.add((current_x, y))
+
+        for current_y in range(0, board.height):
+            tile = board.get(x, current_y)
+            if not Transcendence.Tile.is_breakable(tile):
+                continue
+
+            probability = max(0.1, 1 - (0.15 * abs(current_y - y)))
+            if random.random() < probability:
+                hit_tiles.add((x, current_y))
+
+        return hit_tiles
 
     def __str__(self):
         return 'Tidal Wave'

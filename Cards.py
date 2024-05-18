@@ -136,7 +136,19 @@ class Hellfire(Card):
         self.level = level
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
-        raise NotImplementedError()
+        breaks = {
+            (0, 0): [1, 1, 1],
+        }
+        for x in range(4):
+            for y in range(4 - x):
+                if x == 0 and y == 0:
+                    continue
+                breaks[(x, y)] = [0.5, 1, 1]
+                breaks[(-x, y)] = [0.5, 1, 1]
+                breaks[(x, -y)] = [0.5, 1, 1]
+                breaks[(-x, -y)] = [0.5, 1, 1]
+
+        return Card.get_hit_tiles(board, x, y, breaks)
 
     def __str__(self):
         return 'Hellfire'

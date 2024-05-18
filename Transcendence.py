@@ -153,11 +153,15 @@ class TranscendenceGame:
         self.changes_left += 1
 
     def use_left(self, x: int, y: int):
-        # TODO: Make sure that the tile used is valid.
         move = TranscendenceMove(self.hand_left, x, y)
-        hit_tiles = move.get_hit_tiles(self.board)
-        self.board.calculate_hit_tiles(hit_tiles)
+        self.use_move(move)
 
+    def use_move(self, move: TranscendenceMove):
+        # TODO: Make sure that the tile used is valid.
+        hit_tiles = move.get_hit_tiles(self.board)
+        tile_counter = self.board.calculate_hit_tiles(hit_tiles)
+        if Tile.BLESSING in tile_counter:
+            self.bless()
         # TODO: Add card moving.
 
     def __str__(self):

@@ -247,7 +247,7 @@ class Explosion(Card):
 
                 probability = max(0.1, 1 - (0.15 * delta))
                 if random.random() < probability:
-                    hit_tiles.add((x, current_y))
+                    hit_tiles.add((cx, cy))
         
         return hit_tiles
 
@@ -260,7 +260,16 @@ class Lightning(Card):
         self.level = level
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
-        raise NotImplementedError()
+        hit_tiles = set()
+        target_count = [2, 4, 6]
+        additional_targets = random.randint(-1, target_count[self.level.value])
+        if additional_targets < 0:
+            hit_tiles.update(
+                random.sample(board.destroyed_tiles, k=-additional_targets))
+        else:
+            hit_tiles.update(
+                random.sample(board.breakable_tiles, k=additional_targets))
+        return hit_tiles
 
     def __str__(self):
         return 'Lightning'

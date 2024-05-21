@@ -32,8 +32,29 @@ class TranscendenceBoard:
         self.grid = [[Tile.NORMAL for _ in range(width)] for _ in range(height)]
         self.breakable_tiles = set()
         self.distorted_tiles = set()
+        self.destroyed_tiles = set()
         self.unusable_tiles = set()
         self._populate_tiles()
+
+    def _add_tile_metadata(self, x, y, tile):
+        if tile is Tile.NONE:
+            self.unusable_tiles.add((x, y))
+        elif tile is Tile.DISTORTED:
+            self.distorted_tiles.add((x, y))
+        elif tile is Tile.DESTROYED:
+            self.destroyed_tiles.add((x, y))
+        else:
+            self.breakable_tiles.add((x, y))
+
+    def _remove_tile_metadata(self, x, y, tile):
+        if tile is Tile.NONE:
+            self.unusable_tiles.remove((x, y))
+        elif tile is Tile.DISTORTED:
+            self.distorted_tiles.remove((x, y))
+        elif tile is Tile.DESTROYED:
+            self.destroyed_tiles.remove((x, y))
+        else:
+            self.breakable_tiles.remove((x, y))
 
     def _populate_tiles(self) -> None:
         self.breakable_tiles.clear()
@@ -41,12 +62,7 @@ class TranscendenceBoard:
         self.unusable_tiles.clear()
         for y, row in enumerate(self.grid):
             for x, tile in enumerate(row):
-                if tile is Tile.NONE:
-                    self.unusable_tiles.add((x, y))
-                elif tile is Tile.DISTORTED:
-                    self.distorted_tiles.add((x, y))
-                else:
-                    self.breakable_tiles.add((x, y))
+                self._add_tile_metadata(tile)
 
     def set_tile(self, x: int, y: int, tile: Tile) -> None:
         if not self.in_board(x, y):
@@ -65,19 +81,8 @@ class TranscendenceBoard:
 
         self.grid[y][x] = tile
 
-        if tile is Tile.NONE:
-            self.unusable_tiles.add((x, y))
-        elif tile is Tile.DISTORTED:
-            self.distorted_tiles.add((x, y))
-        else:
-            self.breakable_tiles.add((x, y))
-
-        if old_tile is Tile.NONE:
-            self.unusable_tiles.remove((x, y))
-        elif old_tile is Tile.DISTORTED:
-            self.distorted_tiles.remove((x, y))
-        else:
-            self.breakable_tiles.remove((x, y))
+        self._add_tile_metadata(tile)
+        self._remove_tile_metadata(old_tile)
 
     def in_board(self, x: int, y: int) -> bool:
         return x >= 0 and x < self.width and y >= 0 and y < self.height

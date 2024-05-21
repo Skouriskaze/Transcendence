@@ -260,15 +260,22 @@ class Lightning(Card):
         self.level = level
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
-        hit_tiles = set()
+        hit_tiles = {(x, y)}
         target_count = [2, 4, 6]
         additional_targets = random.randint(-1, target_count[self.level.value])
+        additional_targets = -1
         if additional_targets < 0:
-            hit_tiles.update(
-                random.sample(board.destroyed_tiles, k=-additional_targets))
+            total_targets = min(-additional_targets, len(board.destroyed_tiles) + 1)
+            hit_tiles.symmetric_difference_update(
+                random.sample(board.destroyed_tiles.union({(x, y)}),
+                                k=total_targets))
         else:
+            total_targets = min(additional_targets, len(board.breakable_tiles) - 1)
             hit_tiles.update(
-                random.sample(board.breakable_tiles, k=additional_targets))
+                random.sample(
+                    board.breakable_tiles.symmetric_difference({(x, y)}),
+                    k=total_targets))
+
         return hit_tiles
 
     def __str__(self):

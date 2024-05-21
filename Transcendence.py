@@ -62,7 +62,7 @@ class TranscendenceBoard:
         self.unusable_tiles.clear()
         for y, row in enumerate(self.grid):
             for x, tile in enumerate(row):
-                self._add_tile_metadata(tile)
+                self._add_tile_metadata(x, y, tile)
 
     def set_tile(self, x: int, y: int, tile: Tile) -> None:
         if not self.in_board(x, y):
@@ -81,8 +81,8 @@ class TranscendenceBoard:
 
         self.grid[y][x] = tile
 
-        self._add_tile_metadata(tile)
-        self._remove_tile_metadata(old_tile)
+        self._add_tile_metadata(x, y, tile)
+        self._remove_tile_metadata(x, y, old_tile)
 
     def in_board(self, x: int, y: int) -> bool:
         return x >= 0 and x < self.width and y >= 0 and y < self.height
@@ -100,6 +100,8 @@ class TranscendenceBoard:
         for x, y in hit_tiles:
             tile = self.get(x, y)
             if not Tile.is_breakable(tile):
+                # TODO: Implement breakable tiles being undone.
+                # In the case of lightning.
                 raise NotImplementedError(f'Tile of type {tile}'
                                           'is not supported')
             else:
@@ -166,7 +168,7 @@ class TranscendenceGame:
 
     def use_move(self, move: TranscendenceMove):
         # TODO: Make sure that the tile used is valid.
-        hit_tiles = move.get_hit_tiles(self.board)
+        hit_tiles = move.get_hit_tiles(self.board, move.x, move.y)
         tile_counter = self.board.calculate_hit_tiles(hit_tiles)
         if Tile.BLESSING in tile_counter:
             self.bless()

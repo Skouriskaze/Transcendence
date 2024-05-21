@@ -273,7 +273,7 @@ class Lightning(Card):
             total_targets = min(additional_targets, len(board.breakable_tiles) - 1)
             hit_tiles.update(
                 random.sample(
-                    board.breakable_tiles.symmetric_difference({(x, y)}),
+                    board.breakable_tiles.difference({(x, y)}),
                     k=total_targets))
 
         return hit_tiles

@@ -263,7 +263,6 @@ class Lightning(Card):
         hit_tiles = {(x, y)}
         target_count = [2, 4, 6]
         additional_targets = random.randint(-1, target_count[self.level.value])
-        additional_targets = -1
         if additional_targets < 0:
             total_targets = min(-additional_targets, len(board.destroyed_tiles) + 1)
             hit_tiles.symmetric_difference_update(

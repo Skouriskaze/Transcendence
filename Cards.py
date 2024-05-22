@@ -7,6 +7,7 @@ from typing import List
 import Transcendence
 import random
 
+# TODO: Add levels to string
 class CardLevel(Enum):
     NORMAL = 0
     ENHANCED = 1
@@ -21,7 +22,8 @@ class Card:
         raise NotImplementedError()
 
     def enhance(self) -> None:
-        pass
+        if not self.level is CardLevel.MAX:
+            self.level = CardLevel(self.level.value + 1)
 
     @classmethod
     def get_hit_tiles(self,
@@ -283,3 +285,25 @@ class Lightning(Card):
 
     def __str__(self):
         return 'Lightning'
+
+
+class Tree(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        super().__init__(level)
+
+    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+        raise NotImplementedError()
+
+    def __str__(self):
+        return 'World Tree'
+
+
+class Outburst(Card):
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        super().__init__(level)
+
+    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+        raise NotImplementedError()
+
+    def __str__(self):
+        return 'Outburst'

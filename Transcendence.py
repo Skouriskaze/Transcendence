@@ -3,6 +3,7 @@ from typing import Set, Tuple, Dict
 from collections import Counter
 import Cards
 import Generators
+import random
 
 
 
@@ -156,16 +157,28 @@ class TranscendenceGame:
 
     def enhance(self, move: TranscendenceMove) -> None:
         if move.is_left:
-            self.hand_right
+            self.hand_right.enhance()
         else:
-            pass
-        raise NotImplementedError()
+            self.hand_left.enhance()
 
     def clone(self, move: TranscendenceMove) -> None:
-        raise NotImplementedError()
+        if move.is_left:
+            self.hand_right = move.card
+        else:
+            self.hand_left = move.card
 
     def mystery(self, move: TranscendenceMove) -> None:
-        raise NotImplementedError()
+        result = None
+        if random.choice([True, False]):
+            result = Cards.Tree()
+        else:
+            result = Cards.Outburst()
+
+        if move.is_left:
+            self.hand_right = result
+        else:
+            self.hand_left = result
+
 
     def relocation(self, move: TranscendenceMove) -> None:
         raise NotImplementedError()

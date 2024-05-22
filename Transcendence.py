@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Set, Tuple, Dict
 from collections import Counter
 import Cards
+import Generators
 
 
 
@@ -119,15 +120,6 @@ class TranscendenceBoard:
 
         return tile_count
 
-
-            # if self.board.get(*hit_tile) is Tile.NORMAL:
-            #     self.board.set_tile(*hit_tile, Tile.DESTROYED)
-            # elif hit_tile is Tile.DISTORTED:
-            #     raise NotImplementedError()
-            # else:
-            #     raise NotImplementedError(f'Tile of type {hit_tile}'
-            #                               'is not supported')
-
     def __str__(self) -> str:
         output = ''
         for row in self.grid:
@@ -136,10 +128,11 @@ class TranscendenceBoard:
 
 
 class TranscendenceMove:
-    def __init__(self, card: Cards.Card, x: int, y: int):
+    def __init__(self, card: Cards.Card, x: int, y: int, is_left: bool = True):
         self.x = x
         self.y = y
         self.card = card
+        self.is_left = is_left
 
     def get_hit_tiles(self, board: TranscendenceBoard, x: int, y: int):
         return self.card.use(board, x, y)
@@ -149,10 +142,9 @@ class TranscendenceGame:
     def __init__(self, board: TranscendenceBoard):
         self.board = board
         self.hand_left = Cards.Thunder()
-        self.hand_right = Cards.Thunder()
-        self.queue_first = Cards.Thunder()
-        self.queue_second = Cards.Thunder()
-        self.queue_third = Cards.Thunder()
+        self.hand_right = Cards.Tornado()
+        self.hand_queue = [Cards.Lightning(), Cards.Tempest(), Cards.Purify()]
+        self.hand_queue_size = 3
         self.turns_left = 0
         self.changes_left = 0
 
@@ -162,17 +154,81 @@ class TranscendenceGame:
     def add(self):
         self.changes_left += 1
 
+    def enhance(self):
+        raise NotImplementedError()
+
+    def clone(self):
+        raise NotImplementedError()
+
+    def mystery(self):
+        raise NotImplementedError()
+
+    def relocation(self):
+        raise NotImplementedError()
+
     def use_left(self, x: int, y: int):
-        move = TranscendenceMove(self.hand_left, x, y)
+        move = TranscendenceMove(self.hand_left, x, y, is_left=True)
         self.use_move(move)
 
     def use_move(self, move: TranscendenceMove):
-        # TODO: Make sure that the tile used is valid.
+        # Ensure the move is on a valid tile.
+        if (move.x, move.y) not in self.board.breakable_tiles:
+            if ((move.x, move.y) in self.board.distorted_tiles
+                and isinstance(move.card, Cards.Purify)):
+                pass
         hit_tiles = move.get_hit_tiles(self.board, move.x, move.y)
         tile_counter = self.board.calculate_hit_tiles(hit_tiles)
+
         if Tile.BLESSING in tile_counter:
             self.bless()
-        # TODO: Add card moving.
+        if Tile.ADDITION in tile_counter:
+            self.add()
+        if Tile.CLONE in tile_counter:
+            self.bless()
+        if Tile.ENHANCEMENT in tile_counter:
+            self.add()
+        if Tile.MYSTERY in tile_counter:
+            self.add()
+        if Tile.RELOCATION in tile_counter:
+            self.bless()
+
+        # TODO: Add all fancy tiles.
+        # TODO: Add card moving. Include card generation.
+        # TODO: Add new board generation. Namely enhanced tile.
+        # TODO: Add 
+
+        self.fix_hand()
+
+    def fix_hand(self) -> None:
+        # How to fix hand:
+        # 1. Fill in left and right hand slots.
+        # 2. Merge hands if needed. Fold right into left.
+        # 3. Fill in hand slots.
+        # 4. Merge hands if needed...
+        # 5. Continue until both hand slots are full.
+        self._fold_hand()
+        self._refill_hand_queue()
+        while self.hand_left is None or self.hand_right is None:
+            if self.hand_left is None:
+                self.hand_left = self.hand_queue.pop(0)
+            if self.hand_right is None:
+                self.hand_right = self.hand_queue.pop(0)
+            self._fold_hand()
+            self._refill_hand_queue()
+
+    def _fold_hand(self) -> None:
+        if self.hand_left is None or self.hand_right is None:
+            return
+        if type(self.hand_left) is type(self.hand_right):
+            if not (self.hand_left.level is Cards.CardLevel.MAX
+                or self.hand_right.level is Cards.CardLevel.MAX):
+                self.hand_right = None
+                self.hand_left.level = Cards.CardLevel(
+                    self.hand_left.level.value + 1)
+
+    def _refill_hand_queue(self) -> None:
+        while len(self.hand_queue) < self.hand_queue_size:
+            self.hand_queue.append(Generators.CardGenerator.get_random_card())
 
     def __str__(self):
         return str(self.board)

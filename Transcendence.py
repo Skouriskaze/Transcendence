@@ -148,22 +148,26 @@ class TranscendenceGame:
         self.turns_left = 0
         self.changes_left = 0
 
-    def bless(self):
+    def bless(self, move: TranscendenceMove) -> None:
         self.turns_left += 1
 
-    def add(self):
+    def add(self, move: TranscendenceMove) -> None:
         self.changes_left += 1
 
-    def enhance(self):
+    def enhance(self, move: TranscendenceMove) -> None:
+        if move.is_left:
+            self.hand_right
+        else:
+            pass
         raise NotImplementedError()
 
-    def clone(self):
+    def clone(self, move: TranscendenceMove) -> None:
         raise NotImplementedError()
 
-    def mystery(self):
+    def mystery(self, move: TranscendenceMove) -> None:
         raise NotImplementedError()
 
-    def relocation(self):
+    def relocation(self, move: TranscendenceMove) -> None:
         raise NotImplementedError()
 
     def use_left(self, x: int, y: int):
@@ -180,17 +184,17 @@ class TranscendenceGame:
         tile_counter = self.board.calculate_hit_tiles(hit_tiles)
 
         if Tile.BLESSING in tile_counter:
-            self.bless()
+            self.bless(move)
         if Tile.ADDITION in tile_counter:
-            self.add()
+            self.add(move)
         if Tile.CLONE in tile_counter:
-            self.bless()
+            self.clone(move)
         if Tile.ENHANCEMENT in tile_counter:
-            self.add()
+            self.enhance(move)
         if Tile.MYSTERY in tile_counter:
-            self.add()
+            self.mystery(move)
         if Tile.RELOCATION in tile_counter:
-            self.bless()
+            self.relocation(move)
 
         # TODO: Add all fancy tiles.
         # TODO: Add card moving. Include card generation.
@@ -223,8 +227,7 @@ class TranscendenceGame:
             if not (self.hand_left.level is Cards.CardLevel.MAX
                 or self.hand_right.level is Cards.CardLevel.MAX):
                 self.hand_right = None
-                self.hand_left.level = Cards.CardLevel(
-                    self.hand_left.level.value + 1)
+                self.hand_left.enhance()
 
     def _refill_hand_queue(self) -> None:
         while len(self.hand_queue) < self.hand_queue_size:

@@ -14,11 +14,14 @@ class CardLevel(Enum):
 
 
 class Card:
-    def __init__(self):
-        raise NotImplementedError()
+    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+        self.level = level
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
+
+    def enhance(self) -> None:
+        pass
 
     @classmethod
     def get_hit_tiles(self,
@@ -42,6 +45,7 @@ class Card:
 
         return hit_tiles
 
+
 class Thunder(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
@@ -63,7 +67,7 @@ class Thunder(Card):
 
 class Tornado(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
+        super().__init__(level)
     
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
@@ -82,7 +86,7 @@ class Tornado(Card):
 
 class Purify(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
+        super().__init__(level)
     
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
@@ -112,7 +116,7 @@ class Purify(Card):
 
 class Tempest(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
+        super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
@@ -133,7 +137,7 @@ class Tempest(Card):
 
 class Hellfire(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
+        super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
@@ -156,7 +160,7 @@ class Hellfire(Card):
 
 class Shockwave(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
+        super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
@@ -178,7 +182,7 @@ class Shockwave(Card):
 
 class Earthquake(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
+        super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
@@ -199,7 +203,7 @@ class Earthquake(Card):
 
 class TidalWave(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
+        super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
@@ -229,7 +233,7 @@ class TidalWave(Card):
 
 class Explosion(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
+        super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
@@ -257,7 +261,7 @@ class Explosion(Card):
 
 class Lightning(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
-        self.level = level
+        super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = {(x, y)}

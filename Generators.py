@@ -3,7 +3,7 @@ import Cards
 
 class CardGenerator:
     @classmethod
-    def get_random_card(cls):
+    def get_random_card(cls) -> Cards.Card:
         probabilities = {
             Cards.Thunder: 150,
             Cards.Hellfire: 115,
@@ -16,4 +16,7 @@ class CardGenerator:
             Cards.Purify: 100,
             Cards.Tornado: 150,
         }
-        pass
+        cards = list(probabilities.values())
+        chosen_card = (
+            random.choices(cards, [probabilities[card] for card in cards]))
+        return chosen_card()

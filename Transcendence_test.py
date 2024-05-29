@@ -1,8 +1,9 @@
 import Transcendence
 import Cards
 import unittest
+import Generators
 import random
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 # Tests to add:
 
@@ -85,6 +86,38 @@ class TestTileEnhancements(unittest.TestCase):
         self.game.enhance(self.move_right)
         self.assertEqual(Cards.CardLevel.MAX, self.game.hand_left.level)
 
+
+class TestCards(unittest.TestCase):
+    def setUp(self) -> None:
+        board = Transcendence.TranscendenceBoard(5, 5)
+        game = Transcendence.TranscendenceGame(board)
+        game.hand_left = Cards.Thunder()
+        game.hand_right = Cards.Thunder()
+        game.hand_queue = (
+            [Cards.Lightning(), Cards.Tempest(), Cards.Earthquake()]
+        )
+        self.game = game
+
+    def test_card_folding(self):
+        Generators.CardGenerator.get_random_card = Mock()
+        Generators.CardGenerator.get_random_card.side_effect = (
+            [Cards.Shockwave(), Cards.Tornado(), Cards.Hellfire()]
+        )
+        self.game.fix_hand()
+        self.assertEqual(self.game.hand_left, Cards.Thunder(Cards.CardLevel.ENHANCED))
+        self.assertEqual(self.game.hand_right, Cards.Lightning())
+        self.assertListEqual(self.game.hand_queue, [Cards.Tempest(), Cards.Earthquake(), Cards.Shockwave()])
+
+    def test_card_folding_twice(self):
+        Generators.CardGenerator.get_random_card = Mock()
+        Generators.CardGenerator.get_random_card.side_effect = (
+            [Cards.Shockwave(), Cards.Tornado(), Cards.Hellfire()]
+        )
+        self.game.hand_queue[0] = Cards.Thunder()
+        self.game.fix_hand()
+        self.assertEqual(self.game.hand_left, Cards.Thunder(Cards.CardLevel.MAX))
+        self.assertEqual(self.game.hand_right, Cards.Tempest())
+        self.assertListEqual(self.game.hand_queue, [Cards.Earthquake(), Cards.Shockwave(), Cards.Tornado()])
 
 if __name__ == '__main__':
     unittest.main()

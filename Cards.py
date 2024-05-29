@@ -47,6 +47,9 @@ class Card:
 
         return hit_tiles
 
+    def __eq__(self, other):
+        return (self.level, type(self)) == (other.level, type(other))
+
 
 class Thunder(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
@@ -288,7 +291,7 @@ class Lightning(Card):
 
 
 class Tree(Card):
-    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+    def __init__(self, level: CardLevel=CardLevel.MAX):
         super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
@@ -299,7 +302,7 @@ class Tree(Card):
 
 
 class Outburst(Card):
-    def __init__(self, level: CardLevel=CardLevel.NORMAL):
+    def __init__(self, level: CardLevel=CardLevel.MAX):
         super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:

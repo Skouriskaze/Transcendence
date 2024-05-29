@@ -112,7 +112,7 @@ class TranscendenceBoard:
                         tile_count[tile] += 1
                         self.set_tile(x, y, Tile.DESTROYED)
                     else:
-                        # TODO: Implement hitting distorted tiles. Keep in minnd
+                        # TODO: Implement hitting distorted tiles. Keep in mind
                         # that distorted tiles activate after all tiles break.
                         raise NotImplementedError()
                 else:

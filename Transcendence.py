@@ -25,6 +25,13 @@ class Tile(Enum):
             return False
         return True
 
+    @classmethod
+    def is_special(cls, tile: 'Tile'):
+        if tile in {Tile.ADDITION, Tile.RELOCATION,
+                    Tile.CLONE, Tile.BLESSING, Tile.MYSTERY, Tile.ENHANCEMENT}:
+            return True
+        return False
+
 
 class TranscendenceBoard:
     # TODO: Add a function for relocation.
@@ -36,9 +43,10 @@ class TranscendenceBoard:
         self.distorted_tiles = set()
         self.destroyed_tiles = set()
         self.unusable_tiles = set()
+        self.special_tiles = set()
         self._populate_tiles()
 
-    def _add_tile_metadata(self, x, y, tile):
+    def _add_tile_metadata(self, x: int, y: int, tile: Tile):
         if tile is Tile.NONE:
             self.unusable_tiles.add((x, y))
         elif tile is Tile.DISTORTED:
@@ -46,9 +54,11 @@ class TranscendenceBoard:
         elif tile is Tile.DESTROYED:
             self.destroyed_tiles.add((x, y))
         else:
+            if Tile.is_special(tile):
+                self.special_tiles.add((x, y))
             self.breakable_tiles.add((x, y))
 
-    def _remove_tile_metadata(self, x, y, tile):
+    def _remove_tile_metadata(self, x: int, y: int, tile: Tile):
         if tile is Tile.NONE:
             self.unusable_tiles.remove((x, y))
         elif tile is Tile.DISTORTED:
@@ -56,6 +66,8 @@ class TranscendenceBoard:
         elif tile is Tile.DESTROYED:
             self.destroyed_tiles.remove((x, y))
         else:
+            if Tile.is_special(tile):
+                self.special_tiles.remove((x, y))
             self.breakable_tiles.remove((x, y))
 
     def _populate_tiles(self) -> None:
@@ -74,17 +86,26 @@ class TranscendenceBoard:
         if old_tile is Tile.NONE:
             return None
 
-        self.setup_board_tile(x, y, tile)
+        self._setup_board_tile(x, y, tile)
 
-    def setup_board_tile(self, x: int, y: int, tile: Tile) -> None:
+    def _setup_board_tile(self, x: int, y: int, tile: Tile) -> None:
         if not self.in_board(x, y):
             return None
         old_tile = self.get(x, y)
 
         self.grid[y][x] = tile
-
-        self._add_tile_metadata(x, y, tile)
         self._remove_tile_metadata(x, y, old_tile)
+        self._add_tile_metadata(x, y, tile)
+
+    def _clear_special_tiles(self) -> None:
+        for x, y in self.special_tiles:
+            self.set_tile(x, y, Tile.NORMAL)
+
+    def set_special_tile(self) -> None:
+        if self.breakable_tiles:
+            x, y = random.choice(self.breakable_tiles)
+            special_tile = Generators.TileGenerator.get_random_tile()
+            self.set_tile(x, y, special_tile)
 
     def in_board(self, x: int, y: int) -> bool:
         return x >= 0 and x < self.width and y >= 0 and y < self.height
@@ -188,6 +209,9 @@ class TranscendenceGame:
         self.use_move(move)
 
     def use_move(self, move: TranscendenceMove):
+        # Calculate hit tiles, then break them and use special effects as
+        # necessary. Then cycle hand and set next board state.
+
         # Ensure the move is on a valid tile.
         if (move.x, move.y) not in self.board.breakable_tiles:
             if ((move.x, move.y) in self.board.distorted_tiles
@@ -208,11 +232,6 @@ class TranscendenceGame:
             self.mystery(move)
         if Tile.RELOCATION in tile_counter:
             self.relocation(move)
-
-        # TODO: Add all fancy tiles.
-        # TODO: Add card moving. Include card generation.
-        # TODO: Add new board generation. Namely enhanced tile.
-        # TODO: Add 
 
         self.fix_hand()
 

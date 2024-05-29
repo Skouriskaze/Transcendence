@@ -6,7 +6,6 @@ import Generators
 import random
 
 
-
 class Tile(Enum):
     NONE = 0
     NORMAL = 1
@@ -103,7 +102,7 @@ class TranscendenceBoard:
 
     def set_special_tile(self) -> None:
         if self.breakable_tiles:
-            x, y = random.choice(self.breakable_tiles)
+            x, y = random.choice(list(self.breakable_tiles))
             special_tile = Generators.TileGenerator.get_random_tile()
             self.set_tile(x, y, special_tile)
 
@@ -234,6 +233,8 @@ class TranscendenceGame:
             self.relocation(move)
 
         self.fix_hand()
+        self.board.set_special_tile()
+        self.turns_left -= 1
 
     def fix_hand(self) -> None:
         # How to fix hand:

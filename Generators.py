@@ -20,11 +20,11 @@ class CardGenerator:
         cards = list(probabilities.keys())
         chosen_card = (
             random.choices(cards, [probabilities[card] for card in cards]))
-        return chosen_card()
+        return chosen_card[0]()
 
 class TileGenerator:
     @classmethod
-    def get_random_tile(cls) -> Transcendence.Tile:
+    def get_random_tile(cls) -> 'Transcendence.Tile':
         probabilities = {
             Transcendence.Tile.ENHANCEMENT: 160,
             Transcendence.Tile.ADDITION: 235,
@@ -36,4 +36,4 @@ class TileGenerator:
         tiles = list(probabilities.keys())
         chosen_tile = (
             random.choices(tiles, [probabilities[tile] for tile in tiles]))
-        return chosen_tile
+        return chosen_tile[0]

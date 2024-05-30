@@ -149,14 +149,25 @@ class TranscendenceBoard:
 
 
 class TranscendenceMove:
-    def __init__(self, card: Cards.Card, x: int, y: int, is_left: bool = True):
+    def __init__(self, card: Cards.Card, x: int, y: int, is_left: bool = True,
+                 is_change: bool = False):
         self.x = x
         self.y = y
         self.card = card
         self.is_left = is_left
+        self.is_change = is_change
 
     def get_hit_tiles(self, board: TranscendenceBoard, x: int, y: int):
         return self.card.use(board, x, y)
+
+    def __str__(self) -> str:
+        output = ''
+        if self.is_change:
+            output = f'Changing {str(self.card)}'
+        else:
+            output = f'{str(self.card)}: at {(self.x, self.y)}'
+        output += '\n Left' if self.is_left else '\n Right'
+        return output
 
 
 class TranscendenceGame:
@@ -211,30 +222,41 @@ class TranscendenceGame:
         # Calculate hit tiles, then break them and use special effects as
         # necessary. Then cycle hand and set next board state.
 
-        # Ensure the move is on a valid tile.
-        if (move.x, move.y) not in self.board.breakable_tiles:
-            if ((move.x, move.y) in self.board.distorted_tiles
-                and isinstance(move.card, Cards.Purify)):
-                pass
-        hit_tiles = move.get_hit_tiles(self.board, move.x, move.y)
-        tile_counter = self.board.calculate_hit_tiles(hit_tiles)
+        if move.is_change:
+            if move.is_left:
+                self.hand_left = None
+            else:
+                self.hand_right = None
+            self.fix_hand()
+        else:
+            # Ensure the move is on a valid tile.
+            if (move.x, move.y) not in self.board.breakable_tiles:
+                if ((move.x, move.y) in self.board.distorted_tiles
+                    and isinstance(move.card, Cards.Purify)):
+                    pass
+            hit_tiles = move.get_hit_tiles(self.board, move.x, move.y)
+            tile_counter = self.board.calculate_hit_tiles(hit_tiles)
 
-        if Tile.BLESSING in tile_counter:
-            self.bless(move)
-        if Tile.ADDITION in tile_counter:
-            self.add(move)
-        if Tile.CLONE in tile_counter:
-            self.clone(move)
-        if Tile.ENHANCEMENT in tile_counter:
-            self.enhance(move)
-        if Tile.MYSTERY in tile_counter:
-            self.mystery(move)
-        if Tile.RELOCATION in tile_counter:
-            self.relocation(move)
+            if Tile.BLESSING in tile_counter:
+                self.bless(move)
+            if Tile.ADDITION in tile_counter:
+                self.add(move)
+            if Tile.CLONE in tile_counter:
+                self.clone(move)
+            if Tile.ENHANCEMENT in tile_counter:
+                self.enhance(move)
+            if Tile.MYSTERY in tile_counter:
+                self.mystery(move)
+            if Tile.RELOCATION in tile_counter:
+                self.relocation(move)
 
-        self.fix_hand()
-        self.board.set_special_tile()
-        self.turns_left -= 1
+            if move.is_left:
+                self.hand_left = None
+            else:
+                self.hand_right = None
+            self.fix_hand()
+            self.board.set_special_tile()
+            self.turns_left -= 1
 
     def fix_hand(self) -> None:
         # How to fix hand:

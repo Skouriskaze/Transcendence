@@ -25,7 +25,6 @@ class Card:
         if not self.level is CardLevel.MAX:
             self.level = CardLevel(self.level.value + 1)
 
-    @classmethod
     def get_hit_tiles(self,
                       board: 'Transcendence.TranscendenceBoard',
                       x: int,
@@ -64,7 +63,7 @@ class Thunder(Card):
             (0, -1): [0.5, 1, 1],
         }
 
-        return Card.get_hit_tiles(board, x, y, breaks)
+        return super().get_hit_tiles(board, x, y, breaks)
 
     def __str__(self):
         return 'Thunder'
@@ -83,7 +82,7 @@ class Tornado(Card):
             (-1, -1): [0.5, 1, 1],
         }
 
-        return Card.get_hit_tiles(board, x, y, breaks)
+        return super().get_hit_tiles(board, x, y, breaks)
 
     def __str__(self):
         return 'Tornado'
@@ -157,7 +156,7 @@ class Hellfire(Card):
                 breaks[(x, -y)] = [0.5, 1, 1]
                 breaks[(-x, -y)] = [0.5, 1, 1]
 
-        return Card.get_hit_tiles(board, x, y, breaks)
+        return super().get_hit_tiles(board, x, y, breaks)
 
     def __str__(self):
         return 'Hellfire'
@@ -179,7 +178,7 @@ class Shockwave(Card):
             (1, 0): [0.75, 1, 1],
             (1, 1): [0.75, 1, 1],
         }
-        return Card.get_hit_tiles(board, x, y, breaks)
+        return super().get_hit_tiles(board, x, y, breaks)
 
     def __str__(self):
         return 'Shockwave'

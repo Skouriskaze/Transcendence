@@ -1,6 +1,7 @@
 import random
 import Cards
 import Transcendence
+from typing import List
 
 class CardGenerator:
     @classmethod
@@ -37,3 +38,40 @@ class TileGenerator:
         chosen_tile = (
             random.choices(tiles, [probabilities[tile] for tile in tiles]))
         return chosen_tile[0]
+
+class MoveGenerator:
+    @classmethod
+    def get_valid_moves(cls,
+            game: 'Transcendence.TranscendenceGame'
+        ) -> List['Transcendence.TranscendenceMove']:
+        # Valid moves are:
+        # Changing a card (left or right)
+        # Using a card on any breakable tile (left or right)
+        # Using a purify on any distorted or breakable tile. Can use level 3? Doubt.
+        moves = []
+        for x, y in game.board.breakable_tiles:
+            left = Transcendence.TranscendenceMove(game.hand_left, x, y, True)
+            right = Transcendence.TranscendenceMove(game.hand_right, x, y, False)
+            moves.append(left)
+            moves.append(right)
+        if game.changes_left > 0:
+            left = Transcendence.TranscendenceMove(game.hand_left,
+                                                   x=None,
+                                                   y=None,
+                                                   is_left=True,
+                                                   is_change=True)
+            right = Transcendence.TranscendenceMove(game.hand_left,
+                                                    x=None,
+                                                    y=None,
+                                                    is_left=False,
+                                                    is_change=True)
+            moves.append(left)
+            moves.append(right)
+        return moves
+
+    @classmethod
+    def get_random_move(cls,
+            game: 'Transcendence.TranscendenceGame'
+        ) -> List['Transcendence.TranscendenceMove']:
+        return random.choice(MoveGenerator.get_valid_moves(game))
+

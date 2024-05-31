@@ -124,6 +124,7 @@ class Tempest(Card):
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
+        hit_tiles.add((x, y))
         for current_y in range(0, board.height):
             tile = board.get(x, current_y)
             if not Transcendence.Tile.is_breakable(tile):
@@ -211,6 +212,7 @@ class TidalWave(Card):
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
+        hit_tiles.add((x, y))
         for current_x in range(0, board.width):
             tile = board.get(current_x, y)
             if not Transcendence.Tile.is_breakable(tile):
@@ -241,13 +243,14 @@ class Explosion(Card):
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
+        hit_tiles.add((x, y))
         for delta in range(0, max(board.height, board.width)):
-            tiles = set(
+            tiles = set([
                 (x + delta, y + delta),
                 (x - delta, y + delta),
                 (x + delta, y - delta),
                 (x - delta, y - delta),
-            )
+            ])
             for cx, cy in tiles:
                 tile = board.get(cx, cy)
                 if not Transcendence.Tile.is_breakable(tile):
@@ -294,7 +297,27 @@ class Tree(Card):
         super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
-        raise NotImplementedError()
+        breaks = {
+            (0, 0),
+            (1, 0),
+            (2, 0),
+            (-1, 0),
+            (-2, 0),
+            (0, 1),
+            (0, 2),
+            (0, -1),
+            (0, -2),
+        }
+        hit_tiles = set()
+        for (dx, dy) in breaks:
+            tile = board.get(x + dx, y + dy)
+            if not tile:
+                continue
+            if not Transcendence.Tile.is_breakable(tile):
+                continue
+            hit_tiles.add((x + dx, y + dy))
+
+        return hit_tiles
 
     def __str__(self):
         return 'World Tree'
@@ -305,7 +328,8 @@ class Outburst(Card):
         super().__init__(level)
 
     def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
-        raise NotImplementedError()
+        hit_tiles = {(x, y)}
+        return hit_tiles
 
     def __str__(self):
         return 'Outburst'

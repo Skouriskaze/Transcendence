@@ -97,10 +97,11 @@ class TranscendenceBoard:
         self._add_tile_metadata(x, y, tile)
 
     def _clear_special_tiles(self) -> None:
-        for x, y in self.special_tiles:
+        for x, y in list(self.special_tiles):
             self.set_tile(x, y, Tile.NORMAL)
 
     def set_special_tile(self) -> None:
+        self._clear_special_tiles()
         if self.breakable_tiles:
             x, y = random.choice(list(self.breakable_tiles))
             special_tile = Generators.TileGenerator.get_random_tile()
@@ -114,7 +115,7 @@ class TranscendenceBoard:
             return None
         return self.grid[y][x]
 
-    def isFinished(self):
+    def is_finished(self):
         return len(self.breakable_tiles) == 0
 
     def calculate_hit_tiles(self, hit_tiles: Set[Tuple], is_purify: bool = False) -> Counter:

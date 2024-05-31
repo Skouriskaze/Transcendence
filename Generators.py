@@ -30,7 +30,7 @@ class TileGenerator:
             Transcendence.Tile.ENHANCEMENT: 160,
             Transcendence.Tile.ADDITION: 235,
             Transcendence.Tile.CLONE: 160,
-            Transcendence.Tile.RELOCATION: 170,
+            Transcendence.Tile.RELOCATION: 0, # normally 170,
             Transcendence.Tile.MYSTERY: 160,
             Transcendence.Tile.BLESSING: 115,
         }

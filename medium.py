@@ -83,6 +83,25 @@ class ToJson:
         return card_class(card_level)
 
     @classmethod
+    def move_to_json(cls, move: 'Transcendence.TranscendenceMove'):
+        output = {}
+        output['x'] = move.x
+        output['y'] = move.y
+        output['card'] = ToJson.card_to_serializable(move.card)
+        output['is_left'] = move.is_left
+        output['is_change'] = move.is_change
+        return json.dumps(output)
+
+    @classmethod
+    def json_to_move(cls, move_json: dict) -> 'Transcendence.TranscendenceMove':
+        move_dict = json.loads(move_json)
+        move_dict['card'] = ToJson.serializable_to_card(move_dict['card'])
+        move = Transcendence.TranscendenceMove(
+            **move_dict
+        )
+        return move
+        
+    @classmethod
     def game_to_json(cls, game: 'Transcendence.TranscendenceGame'):
         output = {}
         output['board'] = ToJson.board_to_dict(game.board)

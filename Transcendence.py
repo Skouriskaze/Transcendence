@@ -118,18 +118,21 @@ class TranscendenceBoard:
     def is_finished(self):
         return len(self.breakable_tiles) == 0
 
-    def calculate_hit_tiles(self, hit_tiles: Set[Tuple], is_purify: bool = False) -> Counter:
+    def calculate_hit_tiles(self, hit_tiles: Set[Tuple], card_type: type = Cards.Card) -> Counter:
         tile_count = Counter()
         for x, y in hit_tiles:
             tile = self.get(x, y)
             if not Tile.is_breakable(tile):
                 # TODO: Implement breakable tiles being undone.
                 # In the case of lightning.
+                if card_type is Cards.Lightning and tile == Tile.DESTROYED:
+                    tile_count[tile] += 1
+                    self.set_tile(x, y, Tile.NORMAL)
                 raise NotImplementedError(f'Tile of type {tile}'
-                                          'is not supported')
+                                          ' is not supported')
             else:
                 if tile is Tile.DISTORTED:
-                    if is_purify:
+                    if card_type is Cards.Purify:
                         tile_count[tile] += 1
                         self.set_tile(x, y, Tile.DESTROYED)
                     else:

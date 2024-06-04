@@ -5,7 +5,7 @@ from typing import List
 
 class CardGenerator:
     @classmethod
-    def get_random_card(cls) -> cards.Card:
+    def get_random_card(cls) -> 'cards.Card':
         probabilities = {
             cards.Thunder: 150,
             cards.Hellfire: 115,
@@ -18,9 +18,11 @@ class CardGenerator:
             cards.Purify: 100,
             cards.Tornado: 150,
         }
-        cards = list(probabilities.keys())
+        cards_probs = list(probabilities.keys())
         chosen_card = (
-            random.choices(cards, [probabilities[card] for card in cards]))
+            random.choices(
+                cards_probs,
+                [probabilities[card_prob] for card_prob in cards_probs]))
         return chosen_card[0]()
 
 class TileGenerator:

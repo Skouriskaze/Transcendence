@@ -1,14 +1,14 @@
-import Transcendence
+import transcendence
 import itertools
 import json
-import Cards
+import cards
 from typing import List
 
 class GameWrapper:
-    def __init__(self, game: 'Transcendence.TranscendenceGame'):
+    def __init__(self, game: 'transcendence.TranscendenceGame'):
         self.game = game
 
-    def make_move(self, move: 'Transcendence.TranscendenceMove'):
+    def make_move(self, move: 'transcendence.TranscendenceMove'):
         output = []
         board1 = str(self.game).split('\n')
         move_list = str(move).split('\n')
@@ -31,25 +31,25 @@ class GameWrapper:
 
 class _CardConstants:
     CARD_TO_INT = {
-        Cards.Thunder: 0,
-        Cards.Tornado: 1,
-        Cards.Purify: 2,
-        Cards.Tempest: 3,
-        Cards.Hellfire: 4,
-        Cards.Shockwave: 5,
-        Cards.Earthquake: 6,
-        Cards.TidalWave: 7,
-        Cards.Explosion: 8,
-        Cards.Lightning: 9,
-        Cards.Tree: 10,
-        Cards.Outburst: 11,
+        cards.Thunder: 0,
+        cards.Tornado: 1,
+        cards.Purify: 2,
+        cards.Tempest: 3,
+        cards.Hellfire: 4,
+        cards.Shockwave: 5,
+        cards.Earthquake: 6,
+        cards.TidalWave: 7,
+        cards.Explosion: 8,
+        cards.Lightning: 9,
+        cards.Tree: 10,
+        cards.Outburst: 11,
     }
 
     INT_TO_CARD = {v: k for k, v in CARD_TO_INT.items()}
 
 class ToJson:
     @classmethod
-    def board_to_dict(cls, board: 'Transcendence.TranscendenceBoard'):
+    def board_to_dict(cls, board: 'transcendence.TranscendenceBoard'):
         output = {}
         grid = [[tile.value for tile in row] for row in board.grid]
         output['grid'] = grid
@@ -61,15 +61,15 @@ class ToJson:
     def dict_to_board(cls, board_dict: dict):
         width = board_dict.get('width')
         height = board_dict.get('height')
-        board = Transcendence.TranscendenceBoard(width, height)
+        board = transcendence.TranscendenceBoard(width, height)
         raw_grid = board_dict.get('grid')
         for x in range(width):
             for y in range(height):
-                board.set_tile(x, y, Transcendence.Tile(raw_grid[y][x]))
+                board.set_tile(x, y, transcendence.Tile(raw_grid[y][x]))
         return board
 
     @classmethod
-    def card_to_serializable(cls, card: 'Cards.Card'):
+    def card_to_serializable(cls, card: 'cards.Card'):
         card_int = _CardConstants.CARD_TO_INT[type(card)]
         card_level = card.level.value
         return (card_int, card_level)
@@ -83,7 +83,7 @@ class ToJson:
         return card_class(card_level)
 
     @classmethod
-    def move_to_json(cls, move: 'Transcendence.TranscendenceMove'):
+    def move_to_json(cls, move: 'transcendence.TranscendenceMove'):
         output = {}
         output['x'] = move.x
         output['y'] = move.y
@@ -93,16 +93,16 @@ class ToJson:
         return json.dumps(output)
 
     @classmethod
-    def json_to_move(cls, move_json: dict) -> 'Transcendence.TranscendenceMove':
+    def json_to_move(cls, move_json: dict) -> 'transcendence.TranscendenceMove':
         move_dict = json.loads(move_json)
         move_dict['card'] = ToJson.serializable_to_card(move_dict['card'])
-        move = Transcendence.TranscendenceMove(
+        move = transcendence.TranscendenceMove(
             **move_dict
         )
         return move
         
     @classmethod
-    def game_to_json(cls, game: 'Transcendence.TranscendenceGame'):
+    def game_to_json(cls, game: 'transcendence.TranscendenceGame'):
         output = {}
         output['board'] = ToJson.board_to_dict(game.board)
         output['hand_left'] = ToJson.card_to_serializable(game.hand_left)
@@ -118,7 +118,7 @@ class ToJson:
         game_dict = json.loads(game_json)
         board_dict = game_dict.get('board')
         board = ToJson.dict_to_board(board_dict)
-        game = Transcendence.TranscendenceGame(board)
+        game = transcendence.TranscendenceGame(board)
         game.hand_left = ToJson.serializable_to_card(game_dict.get('hand_left'))
         game.hand_right = ToJson.serializable_to_card(
             game_dict.get('hand_right'))

@@ -1,8 +1,8 @@
 from enum import Enum
 from typing import Set, Tuple, Dict
 from collections import Counter
-import Cards
-import Generators
+import cards
+import generators
 import random
 
 
@@ -104,7 +104,7 @@ class TranscendenceBoard:
         self._clear_special_tiles()
         if self.breakable_tiles:
             x, y = random.choice(list(self.breakable_tiles))
-            special_tile = Generators.TileGenerator.get_random_tile()
+            special_tile = generators.TileGenerator.get_random_tile()
             self.set_tile(x, y, special_tile)
 
     def in_board(self, x: int, y: int) -> bool:
@@ -118,21 +118,21 @@ class TranscendenceBoard:
     def is_finished(self):
         return len(self.breakable_tiles) == 0
 
-    def calculate_hit_tiles(self, hit_tiles: Set[Tuple], card_type: type = Cards.Card) -> Counter:
+    def calculate_hit_tiles(self, hit_tiles: Set[Tuple], card_type: type = cards.Card) -> Counter:
         tile_count = Counter()
         for x, y in hit_tiles:
             tile = self.get(x, y)
             if not Tile.is_breakable(tile):
                 # TODO: Implement breakable tiles being undone.
                 # In the case of lightning.
-                if card_type is Cards.Lightning and tile == Tile.DESTROYED:
+                if card_type is cards.Lightning and tile == Tile.DESTROYED:
                     tile_count[tile] += 1
                     self.set_tile(x, y, Tile.NORMAL)
                 raise NotImplementedError(f'Tile of type {tile}'
                                           ' is not supported')
             else:
                 if tile is Tile.DISTORTED:
-                    if card_type is Cards.Purify:
+                    if card_type is cards.Purify:
                         tile_count[tile] += 1
                         self.set_tile(x, y, Tile.DESTROYED)
                     else:
@@ -153,7 +153,7 @@ class TranscendenceBoard:
 
 
 class TranscendenceMove:
-    def __init__(self, card: Cards.Card, x: int, y: int, is_left: bool = True,
+    def __init__(self, card: cards.Card, x: int, y: int, is_left: bool = True,
                  is_change: bool = False):
         self.x = x
         self.y = y
@@ -177,9 +177,9 @@ class TranscendenceMove:
 class TranscendenceGame:
     def __init__(self, board: TranscendenceBoard):
         self.board = board
-        self.hand_left = Cards.Thunder()
-        self.hand_right = Cards.Tornado()
-        self.hand_queue = [Cards.Lightning(), Cards.Tempest(), Cards.Purify()]
+        self.hand_left = cards.Thunder()
+        self.hand_right = cards.Tornado()
+        self.hand_queue = [cards.Lightning(), cards.Tempest(), cards.Purify()]
         self.hand_queue_size = 3
         self.turns_left = 0
         self.changes_left = 0
@@ -205,9 +205,9 @@ class TranscendenceGame:
     def mystery(self, move: TranscendenceMove) -> None:
         result = None
         if random.choice([True, False]):
-            result = Cards.Tree()
+            result = cards.Tree()
         else:
-            result = Cards.Outburst()
+            result = cards.Outburst()
 
         if move.is_left:
             self.hand_right = result
@@ -236,7 +236,7 @@ class TranscendenceGame:
             # Ensure the move is on a valid tile.
             if (move.x, move.y) not in self.board.breakable_tiles:
                 if ((move.x, move.y) in self.board.distorted_tiles
-                    and isinstance(move.card, Cards.Purify)):
+                    and isinstance(move.card, cards.Purify)):
                     pass
             hit_tiles = move.get_hit_tiles(self.board, move.x, move.y)
             tile_counter = self.board.calculate_hit_tiles(hit_tiles)
@@ -283,14 +283,14 @@ class TranscendenceGame:
         if self.hand_left is None or self.hand_right is None:
             return
         if type(self.hand_left) is type(self.hand_right):
-            if not (self.hand_left.level is Cards.CardLevel.MAX
-                or self.hand_right.level is Cards.CardLevel.MAX):
+            if not (self.hand_left.level is cards.CardLevel.MAX
+                or self.hand_right.level is cards.CardLevel.MAX):
                 self.hand_right = None
                 self.hand_left.enhance()
 
     def _refill_hand_queue(self) -> None:
         while len(self.hand_queue) < self.hand_queue_size:
-            self.hand_queue.append(Generators.CardGenerator.get_random_card())
+            self.hand_queue.append(generators.CardGenerator.get_random_card())
 
     def __str__(self):
         return str(self.board)

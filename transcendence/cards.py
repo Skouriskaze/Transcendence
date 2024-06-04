@@ -4,7 +4,7 @@ from typing import Dict
 from typing import Tuple
 from typing import List
 
-import Transcendence
+import transcendence
 import random
 
 # TODO: Add levels to string
@@ -18,7 +18,7 @@ class Card:
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         raise NotImplementedError()
 
     def enhance(self) -> None:
@@ -26,7 +26,7 @@ class Card:
             self.level = CardLevel(self.level.value + 1)
 
     def get_hit_tiles(self,
-                      board: 'Transcendence.TranscendenceBoard',
+                      board: 'transcendence.TranscendenceBoard',
                       x: int,
                       y: int,
                       breaks: Dict[Tuple, List]) -> Set[Tuple]:
@@ -35,11 +35,11 @@ class Card:
             tile = board.get(x + dx, y + dy)
             if not tile:
                 continue
-            if not Transcendence.Tile.is_breakable(tile):
+            if not transcendence.Tile.is_breakable(tile):
                 continue
             
             if random.random() < probabilities[self.level.value]:
-                if tile is Transcendence.Tile.DISTORTED and self.level is CardLevel.MAX:
+                if tile is transcendence.Tile.DISTORTED and self.level is CardLevel.MAX:
                     continue
                 else:
                     hit_tiles.add((x + dx, y + dy))
@@ -54,7 +54,7 @@ class Thunder(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         self.level = level
     
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
             (0, 0): [1, 1, 1],
             (1, 0): [0.5, 1, 1],
@@ -73,7 +73,7 @@ class Tornado(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         super().__init__(level)
     
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
             (0, 0): [1, 1, 1],
             (1, 1): [0.5, 1, 1],
@@ -92,7 +92,7 @@ class Purify(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         super().__init__(level)
     
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
             (0, 0): [1, 1, 1],
             (1, 0): [0.5, 1, 1],
@@ -106,7 +106,7 @@ class Purify(Card):
             tile = board.get(x + dx, y + dy)
             if not tile:
                 continue
-            if not Transcendence.Tile.is_breakable(tile):
+            if not transcendence.Tile.is_breakable(tile):
                 continue
             
             if random.random() < probabilities[self.level.value]:
@@ -122,12 +122,12 @@ class Tempest(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         super().__init__(level)
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
         hit_tiles.add((x, y))
         for current_y in range(0, board.height):
             tile = board.get(x, current_y)
-            if not Transcendence.Tile.is_breakable(tile):
+            if not transcendence.Tile.is_breakable(tile):
                 continue
 
             probability = max(0.1, 1 - (0.15 * abs(current_y - y)))
@@ -144,7 +144,7 @@ class Hellfire(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         super().__init__(level)
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
             (0, 0): [1, 1, 1],
         }
@@ -167,7 +167,7 @@ class Shockwave(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         super().__init__(level)
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
             (0, 0): [1, 1, 1],
             (1, -1): [0.75, 1, 1],
@@ -189,11 +189,11 @@ class Earthquake(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         super().__init__(level)
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
         for current_x in range(0, board.width):
             tile = board.get(current_x, y)
-            if not Transcendence.Tile.is_breakable(tile):
+            if not transcendence.Tile.is_breakable(tile):
                 continue
 
             probability = max(0.1, 1 - (0.15 * abs(current_x - x)))
@@ -210,12 +210,12 @@ class TidalWave(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         super().__init__(level)
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
         hit_tiles.add((x, y))
         for current_x in range(0, board.width):
             tile = board.get(current_x, y)
-            if not Transcendence.Tile.is_breakable(tile):
+            if not transcendence.Tile.is_breakable(tile):
                 continue
 
             probability = max(0.1, 1 - (0.15 * abs(current_x - x)))
@@ -224,7 +224,7 @@ class TidalWave(Card):
 
         for current_y in range(0, board.height):
             tile = board.get(x, current_y)
-            if not Transcendence.Tile.is_breakable(tile):
+            if not transcendence.Tile.is_breakable(tile):
                 continue
 
             probability = max(0.1, 1 - (0.15 * abs(current_y - y)))
@@ -241,7 +241,7 @@ class Explosion(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         super().__init__(level)
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = set()
         hit_tiles.add((x, y))
         for delta in range(0, max(board.height, board.width)):
@@ -253,7 +253,7 @@ class Explosion(Card):
             ])
             for cx, cy in tiles:
                 tile = board.get(cx, cy)
-                if not Transcendence.Tile.is_breakable(tile):
+                if not transcendence.Tile.is_breakable(tile):
                     continue
 
                 probability = max(0.1, 1 - (0.15 * delta))
@@ -270,7 +270,7 @@ class Lightning(Card):
     def __init__(self, level: CardLevel=CardLevel.NORMAL):
         super().__init__(level)
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = {(x, y)}
         target_count = [2, 4, 6]
         additional_targets = random.randint(-1, target_count[self.level.value])
@@ -296,7 +296,7 @@ class Tree(Card):
     def __init__(self, level: CardLevel=CardLevel.MAX):
         super().__init__(level)
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         breaks = {
             (0, 0),
             (1, 0),
@@ -313,7 +313,7 @@ class Tree(Card):
             tile = board.get(x + dx, y + dy)
             if not tile:
                 continue
-            if not Transcendence.Tile.is_breakable(tile):
+            if not transcendence.Tile.is_breakable(tile):
                 continue
             hit_tiles.add((x + dx, y + dy))
 
@@ -327,7 +327,7 @@ class Outburst(Card):
     def __init__(self, level: CardLevel=CardLevel.MAX):
         super().__init__(level)
 
-    def use(self, board: 'Transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
+    def use(self, board: 'transcendence.TranscendenceBoard', x: int, y: int) -> Set[tuple]:
         hit_tiles = {(x, y)}
         return hit_tiles
 

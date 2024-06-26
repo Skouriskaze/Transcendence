@@ -1,7 +1,10 @@
-import transcendence
-import itertools
 import json
-import cards
+import itertools
+
+from . import cards
+from . import transcendence
+
+
 from typing import List
 
 class GameWrapper:

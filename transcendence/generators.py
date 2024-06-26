@@ -1,7 +1,9 @@
-import random
-import cards
-import transcendence
 from typing import List
+
+from . import cards
+from . import transcendence
+
+import random
 
 class CardGenerator:
     @classmethod

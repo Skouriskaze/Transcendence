@@ -4,7 +4,8 @@ from typing import Dict
 from typing import Tuple
 from typing import List
 
-import transcendence
+from . import transcendence
+
 import random
 
 # TODO: Add levels to string

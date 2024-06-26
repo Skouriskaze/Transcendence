@@ -1,8 +1,10 @@
-import transcendence
-import cards
-import unittest
-import generators
 import random
+import unittest
+
+from . import transcendence
+from . import cards
+from . import generators
+
 from unittest.mock import patch, Mock
 
 # Tests to add:

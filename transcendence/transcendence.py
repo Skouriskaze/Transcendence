@@ -1,8 +1,9 @@
 from enum import Enum
-from typing import Set, Tuple, Dict
+from typing import Set, Tuple
 from collections import Counter
-import cards
-import generators
+from . import cards
+from . import generators
+
 import random
 
 
